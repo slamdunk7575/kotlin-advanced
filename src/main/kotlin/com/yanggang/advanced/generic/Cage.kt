@@ -83,6 +83,11 @@ fun main() {
     -> moveFrom() 함수를 호출할때, Cage2<Fish> 와 Cage2<GoldFish> 사이의 관계를 만들어주자
     */
 
+    val fishCage = Cage2<Fish>()
+    val goldFishCage = Cage2<GoldFish>()
+    // fishCage.moveFrom(goldFishCage)
+    goldFishCage.put(GoldFish("금붕어"))
+    goldFishCage.moveTo(fishCage)
 }
 
 class Cage {
@@ -115,7 +120,56 @@ class Cage2<T> {
         animals.add(animal)
     }
 
-    fun moveFrom(cage: Cage2<T>) {
-        this.animals.addAll(cage.animals)
+    /*
+    타입 파라미터의 상속관계(Fish-GoldFish)가 제네릭까지 어어지게 하는것 -> 변성(공변, 반공변)을 주다
+    out 을 변성(variance) 어노테이션 이라고함
+
+    out 변성 어노테이션의 효과
+    1. 타입 파리미터 상속관계가 제네릭까지 이어지게됨
+    2. otherCage 즉, 함수 파라미터는 생산자(데이터를 꺼내는) 역할만 할 수 있다
+    예:
+        otherCage.getFirst() -> O
+        otherCage.put(this.getFirst()) -> X
+
+    Q. 왜 otherCage 는 생산자 역할만 할 수 있을까?
+    otherCage 가 소비자(데이터를 넣는) 역할도 할 수 있다고 하면
+    this.getFirst() 는 잉어 리턴 -> 잉어를 Cage2<GoldFish> 금붕어 케이지에 넣게되면 타입 안정성이 깨지게됨 (런타임 에러)
+    */
+    fun moveFrom(otherCage: Cage2<out T>) {
+        /*otherCage.getFirst()
+        otherCage.put(this.getFirst())*/
+        this.animals.addAll(otherCage.animals)
+    }
+
+    /*
+    반대의 경우는? (함수 파라미터에 내가 가진 데이터를 전부 넣어주는 경우)
+    예:
+    val goldFishCage = Cage2<GoldFish>()
+    goldFishCage.put(GoldFish("금붕어"))
+    goldFishCage.moveTo(fishCage)
+
+    금붕어를 물고기 케이지로 옮기는 것은 문제가 없다 -> 그런데 Type Missmatch 에러 발생
+
+    Q. 그런데 왜 Type Missmatch 에러가 발생?
+    moveTo(otherCage: Cage2<GoldFish>) 함수에 Cage2<Fish> 를 넣고싶다는 것
+    즉, 이번엔 반대로 Cage2<Fish> 가 Cage2<GoldFish> 의 하위타입이 되어야함
+    -> 타입 파리미터 상속관계가 제네릭까지 이어지게 되는데 반대로 되어야함 (반공변, contra-variant)
+    예:
+    상위 클래스  Fish         Cage2<GlodFish>
+                |               |
+    하위 클래스 GoldFish      Cage2<Fish>
+
+    in 이 붙은 otherCage(Cage2<GoldFish>) 는 소비자(데이터를 받는) 역할만 할 수만 있다
+
+    (정리)
+    out: (함수 파라미터 입장에서) 생산자, 공변 -> 타입 파라미터의 상속관계가 제네릭 클래스에서 유지되는것
+    in: (함수 파라미터 입장에서) 소비자, 반공변 -> 타입 파라미터의 상속관계가 유지되지만 제네릭에서 반대로 되는것
+
+    특정 변수(공변, 반공변)에도 변성을 줄 수 있다
+    val cage: Cage2<out Fish> = Cage2<GoldFish>()
+     */
+
+    fun moveTo(otherCage: Cage2<in T>) {
+        otherCage.animals.addAll(this.animals)
     }
 }
