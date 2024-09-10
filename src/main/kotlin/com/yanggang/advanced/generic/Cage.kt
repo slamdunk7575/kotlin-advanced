@@ -167,6 +167,10 @@ class Cage2<T> {
 
     특정 변수(공변, 반공변)에도 변성을 줄 수 있다
     val cage: Cage2<out Fish> = Cage2<GoldFish>()
+
+    Java 에 있는 와일드 카드 타입과 대응됨
+    <out T> = <? extends T>
+    <in T> = <? super T>
      */
 
     fun moveTo(otherCage: Cage2<in T>) {
