@@ -171,7 +171,16 @@ class Cage2<T> {
     Java 에 있는 와일드 카드 타입과 대응됨
     <out T> = <? extends T>
     <in T> = <? super T>
-     */
+
+    이렇게 특정 지접에 변성을 주는 방식은 유용하다!
+    하지만, 조금 복잡하게 생긴 타입이 여기저기 퍼지는 것은 아쉽다
+
+    예: Stream.java 의 <R> Stream<R> map(Function<? super T, ? extends R> mapper); 등을
+    보면 어려운 타입들이 여기저기 반복되는 것을 볼 수 있음
+
+    Q. 그럼 제네릭 클래스 자체를 공변하게 만들 수는 없을까?
+    -> 코틀린에서는 가능하다 (Cage3 코드 참고)
+    */
 
     fun moveTo(otherCage: Cage2<in T>) {
         otherCage.animals.addAll(this.animals)
