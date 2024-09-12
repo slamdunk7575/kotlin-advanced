@@ -108,7 +108,7 @@ class Cage {
 }
 
 
-class Cage2<T> {
+class Cage2<T : Any> {
 
     private val animals: MutableList<T> = mutableListOf()
 
