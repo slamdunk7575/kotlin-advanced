@@ -96,3 +96,9 @@ T의 companion object 를 가져올 수는 없다
 inline fun <reified T> List<*>.hasAnyInstanceOf(): Boolean {
     return this.any { it is T }
 }
+
+
+class TypeShadow<T : Animal> {
+    fun <T : Animal> addAnimal(animal: T) {
+    }
+}
