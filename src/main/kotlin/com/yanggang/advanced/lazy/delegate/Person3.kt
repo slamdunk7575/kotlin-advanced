@@ -35,7 +35,7 @@ class Person3 {
      ...
     }
     by lazy 역시 완전히 동일한 원리로 동작함!
-    by: name 의 getter 를 Lazy 객체의 getter 로 이어줌 (초기화 함수가 담겨있는 Lzay 객체가 생기고 이 객체과 name 이 이어지는 것)
+    by: name 의 getter 를 Lazy 객체의 getter 로 이어줌 (초기화 함수가 담겨있는 Lzay 객체가 생기고 이 객체와 name 이 이어지는 것)
     lazy: lazy 함수는 Lazy<T> 객체를 반환하고 있다 (Lazy<T>)
     예: public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
