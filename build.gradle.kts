@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.9.22"
+    id("me.champeau.jmh") version "0.7.2"
     application
 }
 
@@ -27,4 +28,11 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
+}
+
+jmh {
+    threads.value(1) // 몇개의 쓰레드에서 돌릴지
+    fork.value(1) // 몇회를 실행할지
+    warmupIterations.value(1)
+    iterations.value(1)
 }
