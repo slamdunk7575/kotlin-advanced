@@ -9,7 +9,7 @@ fun main() {
 
     Q. 만약 존재하는 함수에 대해 변수를 할당하고 싶다면?
     -> 함수 이름 앞에 콜론을 두개 붙임 (JAVA 와 비슷)
-    이러한 기능을 호출 가능 참조(callable reference) 라고 부름
+    이러한 기능을 '호출 가능 참조(callable reference)' 라고 부름
     */
 
     val add1 = { a:Int, b:Int -> a + b }
