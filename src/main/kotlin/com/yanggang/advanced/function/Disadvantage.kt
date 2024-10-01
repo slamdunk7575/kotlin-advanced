@@ -20,7 +20,7 @@ fun main() {
 
 코틀린에는 일반함수만 있는게 아니라 확장함수도 있음
 예: fun Int.add(other: Long): Int = this + other.toInt()
-여기서 Int 를 수신객체타입, this 를 수신개체 라고함
+여기서 Int 를 수신객체타입, this 를 수신객체 라고함
 
 이런 함수 리터럴을 '수신 객체가 있는 함수 리터럴' 이라고 함
 Int.(Long) -> Int
