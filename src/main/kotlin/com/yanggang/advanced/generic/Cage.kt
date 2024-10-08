@@ -17,6 +17,7 @@ fun main() {
 
     /*
     Q. 왜? 컴파일시 오류가 나지 않지만, 런타임이 되어서야 cannot be cast to class.. 발생하기 때문에
+    예:
     cage.put(GoldFish("금붕어"))
     val carp: Carp = cage.getFirst() as Carp
     */
@@ -26,6 +27,7 @@ fun main() {
     Safe Type Casting 과 Elvis 연산자
     하지만, 이 방법도 예외가 발생한다
     실수로 GoldFish 를 cage 에 넣게 되면 런타임시에야 예외를 알 수 있다
+    예:
     cage.put(GoldFish("금붕어"))
     val carp: Carp = cage.getFirst() as? Carp
         ?: throw IllegalArgumentException()
