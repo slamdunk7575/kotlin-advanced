@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
+    // 리플렉션 관련 여러 기능들이 모여있는 JAVA 라이브러리
+    implementation("org.reflections:reflections:0.10.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.22")
     testImplementation(kotlin("test"))
     testImplementation("org.assertj:assertj-core:3.24.2")

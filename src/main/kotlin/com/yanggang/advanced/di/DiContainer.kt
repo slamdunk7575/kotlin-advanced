@@ -1,5 +1,6 @@
 package com.yanggang.advanced.di
 
+import org.reflections.Reflections
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -18,6 +19,8 @@ DI(Dependency Injection) 컨테이너
 - 파라미터가 없는 생성자(=기본 생성자)를 가진 클래스를 컨테이너에 등록할 수 있다
 - 등록한 클래스의 인스턴스를 컨테이너로부터 받아올 수 있다
 */
+
+class Di
 
 // 싱글턴으로 만들기 위해 object 키워드(클래스 정의와 동시에 객체를 생성) 사용
 object DiContainerV1 {
@@ -41,6 +44,24 @@ object DiContainerV1 {
             ?: throw IllegalArgumentException("해당 인스턴스 타입을 찾을 수 없습니다")
     }
 }
+
+fun start(clazz: KClass<*>) {
+    // clazz.qualifiedName 을 통해 패키지를 가지고 옴 (예: com.yanggang.advanced.di.AService)
+    val reflections = Reflections(clazz.packageName)
+    val jClasses = reflections.getTypesAnnotatedWith(MyAutowired::class.java)
+    // jClass 는 JAVA 리프렉션 객체라서 .kotlin 으로 KClass 로 변경
+    jClasses.forEach { jClass -> DiContainerV2.register(jClass.kotlin) }
+}
+
+private val KClass<*>.packageName: String
+    get() {
+        val qualifiedName: String = this.qualifiedName
+            // 클래스 이름이 없는 익명 클래스도 있기 때문에
+            ?: throw IllegalArgumentException("익명 객체입니다")
+        val hierarchy = qualifiedName.split(".") // 예: com yanggang advanced di AService
+        // 클래스 이름만 제외하고 다시 . 으로 합쳐서 패키지 이름 가려옴 (예: com.yanggang.advanced.di)
+        return hierarchy.subList(0, hierarchy.lastIndex).joinToString(".")
+    }
 
 /*
 2단계
@@ -123,17 +144,42 @@ fun main() {
     aService.print()
     */
 
-    DiContainerV2.register(AService::class)
-    DiContainerV2.register(BService::class)
     /*
     컨테이너에서 BService 를 가져올때
     컨테이가 알아서 AService 까지 인스턴스화 해서 BService 와 연결시켜줌
     -> 의존성 주입을 대신 해주는 것
     */
+    /*
+    DiContainerV2.register(AService::class)
+    DiContainerV2.register(BService::class)
+    val bService = DiContainerV2.getInstance(BService::class)
+    bService.print()
+    */
+
+    /*
+    3단계
+    클래스에 어노테이션을 붙이면 그 클래스들이 자동으로 컨테이너에 등록된다
+    -> 만약 DI 컨테이너에서 수십개 수백개 클래스를 관리한다면 한땀한땀 코드를 작성해줘야함
+
+    예:
+    val reflections = Reflections("com.yanggang.advanced.di")
+    // MyAutowired::class.java 는 자바 리플렉션 객체
+    val jClasses = reflections.getTypesAnnotatedWith(MyAutowired::class.java)
+    println(jClasses)
+    */
+
+    /*
+    예: Di 클래스가 있는 패키지를 기준으로 하위 클래스까지 모두
+    컨테이너에 자동 등록되게 됨
+    */
+    start(Di::class)
     val bService = DiContainerV2.getInstance(BService::class)
     bService.print()
 }
 
+annotation class MyAutowired
+
+@MyAutowired
 class AService {
 
     fun print() {
@@ -141,6 +187,7 @@ class AService {
     }
 }
 
+@MyAutowired
 class BService (
     private val aService: AService,
     private val cService: CService?,
