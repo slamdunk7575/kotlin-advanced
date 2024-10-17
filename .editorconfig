@@ -1,0 +1,84 @@
+# ktlint 설정 방법 (사람마다 팀마다 선호하는 옵션을 설정)
+# .editorconfig 설정 파일은 ktlint 도 참조하고 IntelliJ 같은 IDE 도 참조함
+# (참고: https://editorconfig.org/)
+
+# IDE 또는 Ktlint 가 추가적인 editorconfig 파일을 찾지 않아도 된다고 알려줌
+# 설정이 없다면 프로젝트 루트에서 상위로 타고 올라가면서 editorconfig 파일을 찾을 수 있음
+root = true
+
+# 아래 옵션을 코틀린 파일이건 자바 파일이건 설정 파일이건 모든 파일에 적용하겠다는 의미
+[*]
+# 4 가 디폴트이지만 명시적으로 작성해두면 좋다
+# 왜?
+# - 버전이 올라가서 기본값이 바뀔 수도 있고
+# - 이 파일만 보고도 협업 하는 사람들이 어떤 설정을 가지고 있는지 파악할 수 있다
+indent_size = 2
+indent_style = space
+
+tab_width = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+# 코틀린 코드에 대한 추가적인 설정
+# 추가적인 설정이기 때문에 파일이 kt, kts(코틀린 소스파일) 인 곳에 적용
+[*.{kt, kts}]
+# KOTLIN_OFFICIAL: Kotlin 코딩 컨벤션 가이드와 Android 코딩 컨벤션 가이드의 좋은점만 가져온것
+kotlin_code_style = kotrlin_official
+# 세세한 설정을 위해서 RuleSet, Rule 에 대해 이해
+#
+# Rule: 특정 상황에서의 코드 규칙을 의미
+# RuleSet: Rule 들이 모여있는 집합 이름
+#
+# 예:
+# A 클래스는 함수 끝나고 클래스 닫히기 전 빈 줄이 없음
+# class A {
+#   fun a() {}
+# }
+#
+# B 클래스는 함수 끝나고 클래스 닫히기 전 빈 줄이 있음
+# class B {
+#   fun b() {}
+#
+# }
+#
+# 위 예시에 대한 설정을 https://pinterest.github.io/ktlint/0.49.1/rules/standard/ 에서 찾아보면 아래와 같다
+# 예:
+# Rule id: no-blank-line-before-rbrace
+# Rule set: standard
+#
+# Rule set 과 Rule id 를 알면 세세한 옵션을 설정할 수 있다
+# 규칙: ktlint_[RuleSet 이름]_[Rule id] = 값
+ktlint_standard_no-blank-line-before-rbrace = true
+
+# 하지만, 일부 설정의 경우 꼭 이 규칙을 따르지는 않는다
+# 예: 와일드 카드 import 를 특정 패키지에 허용하고 싶다면? import java.util.*
+# ij_kotlin_packages_to_use_import_on_demand = unset
+# 위처럼 설정을 해주라고 홈페이지에 나와있는데 이건 규칙이랑 다르다
+# -> 자세한 규칙은 홈페이지를 확인하자
+
+# Ktlint 를 IntelliJ 에서 사용하는 방법
+# -> 공식 홈페이지에서는 IntelliJ formatter 또는 ktlint 둘중 하나만 사용하는 것을 권장
+# 왜?
+# - 위처럼 Ktlint 옵션을 설정하는게 쉽지는 않음
+# - IntelliJ 에서 포맷팅한 결과(cmd + opt + l)와 Ktlint 에 설정한 포맷팅 결과가 다를 수 있음
+#
+# 만약, 둘을 같이 써야 한다면 2가지 XML 설정을 추가로 하도록 권장하고 있음
+# -> 사용해봤을때, 완벽히 호환되지는 않음
+
+
+# Ktlint 를 GIT 과 사용하는 방법
+# gradle -> tasks -> help -> addKtlintCheckGitPreCommitHook
+# GIT 에 커밋하기 전에 ktlint check 를 자동으로 실행시키도록 hook 을 거는것
+# 혹시 스타일 검사가 실패하면 커밋 자체가 안되도록 막을 수 있음
+#
+# (적용)
+# ./gradlew addKtlintCheckGitPreCommitHook
+#
+# (삭제)
+# rm .git/hooks/pre-commit
+#
+# (이번 한번만 pre-commit 없이 하고 싶다면 옵션 추가후 실행)
+# git commit -m "커밋 메시지" --no-verify
